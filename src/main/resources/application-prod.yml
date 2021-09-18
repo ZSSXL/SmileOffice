@@ -1,0 +1,39 @@
+spring:
+  # 热部署开启
+  devtools:
+    restart:
+      enabled: true
+  # 文件上传大小限制
+  servlet:
+    multipart:
+      # 配置文件上传的限制
+      enabled: true
+      # 单个文件大小限制
+      max-file-size: 10MB
+      # 设置总上传数据大小
+      max-request-size: 100MB
+  jpa:
+    show-sql: false
+    open-in-view: false
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: smile
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    url: jdbc:postgresql://101.34.213.93:15432/smile?currentSchema=smile
+    username: smile
+    password: Kk6neiid
+    driver-class-name: org.postgresql.Driver
+
+# 静态资源访问配置
+resources:
+  static:
+    pattern: /static/**
+    location: classpath:/static/
+  files:
+    pattern: /files/**
+    location: /app/data/smile_office/files/
+

@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    mode: HTML
+    prefix: classpath:/templates/
+# 在启动参数中添加  --spring.profiles.active=dev
+
+server:
+  port: 8888
+
+# 上传的文件大小限制
+filesize-max: 5242880
+
+logging:
+  config: classpath:log/logback-spring.xml

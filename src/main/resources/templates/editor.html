@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{static/assets/images/favicon.ico}" type="image/x-icon"/>
+    <title>SmileOffice | Editor</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{static/assets/images/favicon.ico}" type="image/x-icon"/>
+
+    <script type="text/javascript" th:src="@{http://101.34.213.93:6180/web-apps/apps/api/documents/api.js}"></script>
+
+<body style="height: 100%; margin: 0;">
+<div class="form" style="height: 100%;">
+    <div id="iframeEditor"></div>
+</div>
+<script type="text/javascript">
+    // 初始加载页面
+    window.onload = function () {
+        console.log("Editor Loading...")
+        let config = localStorage.getItem("smile-office-config");
+        connectEditor(config);
+    };
+
+    let docEditor;
+
+    let innerAlert = function (message) {
+        if (console && console.log)
+            console.log(message);
+    };
+
+    let onAppReady = function () {
+        innerAlert("Document editor ready");
+    };
+
+    let onDocumentStateChange = function (event) {
+        let title = document.title.replace(/\*$/g, "");
+        document.title = title + (event.data ? "*" : "");
+    };
+
+    let onRequestEditRights = function () {
+        location.href = location.href.replace(RegExp("mode=view\&?", "i"), "");
+    };
+
+    let onError = function (event) {
+        if (event)
+            innerAlert(event.data);
+    };
+
+    let onOutdatedVersion = function (event) {
+        location.reload(true);
+    };
+
+    let replaceActionLink = function(href, linkParam) {
+        let link;
+        let actionIndex = href.indexOf("&actionLink=");
+        if (actionIndex !== -1) {
+            let endIndex = href.indexOf("&", actionIndex + "&actionLink=".length);
+            if (endIndex !== -1) {
+                link = href.substring(0, actionIndex) + href.substring(endIndex) + "&actionLink=" + encodeURIComponent(linkParam);
+            } else {
+                link = href.substring(0, actionIndex) + "&actionLink=" + encodeURIComponent(linkParam);
+            }
+        } else {
+            link = href + "&actionLink=" + encodeURIComponent(linkParam);
+        }
+        return link;
+    }
+
+    let onMakeActionLink = function (event) {
+        let actionData = event.data;
+        let linkParam = JSON.stringify(actionData);
+        docEditor.setActionLink(replaceActionLink(location.href, linkParam));
+    };
+
+    let onMetaChange = function (event) {
+        let favorite = !!event.data.favorite;
+        let title = document.title.replace(/^\☆/g, "");
+        document.title = (favorite ? "☆" : "") + title;
+        docEditor.setFavorite(favorite);
+    };
+
+    /**
+     * 连接文档编辑器
+     * @param config
+     */
+    function connectEditor(config){
+        let configJson = JSON.parse(config);
+        configJson.events = {
+            "onAppReady": onAppReady,
+            "onDocumentStateChange": onDocumentStateChange,
+            'onRequestEditRights': onRequestEditRights,
+            "onError": onError,
+            "onOutdatedVersion": onOutdatedVersion,
+            "onMakeActionLink": onMakeActionLink,
+            "onMetaChange": onMetaChange
+        }
+        // console.log(configJson);
+        docEditor = new DocsAPI.DocEditor("iframeEditor", configJson);
+    }
+</script>
+</body>
+</html>

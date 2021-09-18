@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SmileOffice | Sign In</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{static/assets/images/favicon.ico}"/>
+
+    <link rel="stylesheet" th:href="@{static/assets/css/backend.min.css}">
+    <link rel="stylesheet" th:href="@{static/assets/vendor/fortawesome/fontawesome-free/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{static/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{static/assets/vendor/remixicon/fonts/remixicon.css}">
+
+    <!-- notiflix -->
+    <link th:href="@{static/css/notiflix-1.3.0.min.css}" rel="stylesheet"/>
+<body class=" ">
+<!-- loader Start -->
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!-- loader END -->
+
+<div class="wrapper">
+    <section class="login-content">
+        <div class="container h-100">
+            <div class="row justify-content-center align-items-center height-self-center">
+                <div class="col-md-5 col-sm-12 col-12 align-self-center">
+                    <div class="sign-user_card">
+                        <img th:src="@{static/assets/images/logo.png}" class="img-fluid rounded-normal light-logo logo"
+                             alt="logo">
+                        <img th:src="@{static/assets/images/logo-white.png}"
+                             class="img-fluid rounded-normal darkmode-logo logo" alt="logo">
+                        <h3 class="mb-3">登录</h3>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="floating-label form-group">
+                                    <input id="login-name" class="floating-input form-control" type="text"
+                                           placeholder=" ">
+                                    <label>登录名</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="floating-label form-group">
+                                    <input id="password" class="floating-input form-control" type="password"
+                                           placeholder=" ">
+                                    <label>密码</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="custom-control custom-checkbox mb-3 text-left">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                    <label class="custom-control-label" for="customCheck1">记住密码</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <a href="#" class="text-primary float-right"
+                                   data-toggle="tooltip" title="暂时还没用, 别点">忘记密码?</a>
+                            </div>
+                        </div>
+                        <button id="login-btn" class="btn btn-primary">登录</button>
+                        <p class="mt-3">
+                            还没有账号? 去<a th:href="@{signup}" class="text-primary">注册</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Backend Bundle JavaScript -->
+<script th:src="@{static/assets/js/backend-bundle.min.js}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script th:src="@{static/assets/js/customizer.js}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script th:src="@{static/assets/js/chart-custom.js}"></script>
+
+<!-- notiflix -->
+<script th:src="@{static/js/notiflix-1.3.0.min.js}"></script>
+
+<!-- app JavaScript -->
+<script th:src="@{static/assets/js/app.js}"></script>
+
+<script th:src="@{static/js/signin.js}"></script>
+
+<script type="text/javascript">
+    window.onload = function () {
+        localStorage.removeItem("smile-office-token");
+    };
+
+    Notiflix.Notify.Init({
+        timeout: 2000
+    });
+</script>
+</body>
+</html>

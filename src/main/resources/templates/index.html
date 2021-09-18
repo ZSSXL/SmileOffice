@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SmileOffice | Home</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{static/assets/images/favicon.ico}" type="image/x-icon"/>
+
+    <link rel="stylesheet" th:href="@{static/assets/css/backend.min.css}"/>
+    <link rel="stylesheet" th:href="@{static/assets/vendor/fortawesome/fontawesome-free/css/all.min.css}"/>
+    <link rel="stylesheet" th:href="@{static/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{static/assets/vendor/remixicon/fonts/remixicon.css}"/>
+
+    <!-- notiflix -->
+    <link th:href="@{static/css/notiflix-1.3.0.min.css}" rel="stylesheet"/>
+    <link th:href="@{static/css/index.css}" rel="stylesheet"/>
+</head>
+<body class="  ">
+<!-- loader Start -->
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    <div class="iq-sidebar sidebar-default">
+        <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
+            <a th:href="@{index}" class="header-logo">
+                <img th:src="@{static/assets/images/logo.png}" class="img-fluid rounded-normal light-logo" alt="logo">
+                <img th:src="@{static/assets/images/logo-white.png}" class="img-fluid rounded-normal darkmode-logo"
+                     alt="logo">
+            </a>
+            <div class="iq-menu-bt-sidebar">
+                <i class="las la-bars wrapper-menu"></i>
+            </div>
+        </div>
+        <div class="data-scrollbar" data-scroll="1">
+            <div class="new-create select-dropdown input-prepend input-append">
+                <div class="btn-group">
+                    <label data-toggle="dropdown">
+                        <div class="search-query select-caption bg-success">
+                            <i class="las ri-add-circle-line pr-2"></i>新建文档
+                        </div>
+                        <span class="search-replace"></span>
+                        <span class="caret"><!--icon--></span>
+                    </label>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div style="cursor: pointer;" class="item create-new" doc-type="docx">
+                                <i class="ri-file-word-line bg-primary mr-3"></i>文档
+                            </div>
+                        </li>
+                        <li>
+                            <div style="cursor: pointer;" class="item create-new" doc-type="xlsx">
+                                <i class="ri-file-excel-line bg-success mr-3"></i>表格
+                            </div>
+                        </li>
+                        <li>
+                            <div style="cursor: pointer;" class="item create-new" doc-type="pptx">
+                                <i class="ri-file-ppt-line bg-danger mr-3"></i>幻灯片
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <label>
+                        <div id="show-upload-modal" class="search-query select-caption bg-primary">
+                            <i class="las ri-upload-2-line pr-2"></i>上传文档
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <nav class="iq-sidebar-menu">
+                <ul id="iq-sidebar-toggle" class="iq-menu">
+                    <li id="sidebar-1">
+                        <a href="#" class="">
+                            <i class="las la-home iq-arrow-left"></i><span>首页</span>
+                        </a>
+                        <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        </ul>
+                    </li>
+                    <li id="sidebar-2">
+                        <a href="#" class="">
+                            <i class="lar la-star"></i><span>收藏夹</span>
+                        </a>
+                        <ul id="page-fevourite" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        </ul>
+                    </li>
+                    <li id="sidebar-3">
+                        <a href="#" class="">
+                            <i class="las la-trash-alt iq-arrow-left"></i><span>回收站</span>
+                        </a>
+                        <ul id="page-delete" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-3"></div>
+        </div>
+    </div>
+    <div class="iq-top-navbar">
+        <div class="iq-navbar-custom">
+            <nav class="navbar navbar-expand-lg navbar-light p-0">
+                <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
+                    <i class="ri-menu-line wrapper-menu"></i>
+                    <a th:href="index.html" class="header-logo">
+                        <img th:src="@{static/assets/images/logo.png}" class="img-fluid rounded-normal light-logo"
+                             alt="logo">
+                        <img th:src="@{static/assets/images/logo-white.png}"
+                             class="img-fluid rounded-normal darkmode-logo" alt="logo">
+                    </a>
+                </div>
+                <div class="iq-search-bar device-search">
+                    <form>
+                        <div class="input-prepend input-append">
+                            <div class="btn-group">
+                                <label style="width: 28rem;" class="searchbox" data-toggle="dropdown">
+                                    <input class="search-query text search-input" type="text"
+                                           placeholder="输入要查找的文件名..."><span class="search-replace"></span>
+                                    <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="change-mode">
+                        <div class="custom-control custom-switch custom-switch-icon custom-control-inline">
+                            <div class="custom-switch-inner">
+                                <p class="mb-0"></p>
+                                <input type="checkbox" class="custom-control-input" id="dark-mode" data-active="true">
+                                <label class="custom-control-label" for="dark-mode" data-mode="toggle">
+                                    <span class="switch-icon-left"><i class="a-left"></i></span>
+                                    <span class="switch-icon-right"><i class="a-right"></i></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
+                        <i class="ri-menu-3-line"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto navbar-list align-items-center">
+                            <li class="nav-item nav-icon search-content">
+                                <a href="#" class="search-toggle rounded" id="dropdownSearch" data-toggle="dropdown"
+                                   aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <i class="ri-search-line"></i>
+                                </a>
+                                <div class="iq-search-bar iq-sub-dropdown dropdown-menu"
+                                     aria-labelledby="dropdownSearch">
+                                    <form action="#" class="searchbox p-2">
+                                        <div class="form-group mb-0 position-relative">
+                                            <input type="text" class="text search-input font-size-12"
+                                                   placeholder="type here to search..."/>
+                                            <a href="#" class="search-link"><i class="las la-search"></i></a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="nav-item nav-icon dropdown caption-content">
+                                <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton03"
+                                   data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <span id="info-username">Jerry</span>
+                                </a>
+                                <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton03">
+                                    <div class="card mb-0">
+                                        <div class="card-body">
+                                            <div class="profile-header">
+                                                <div class="cover-container text-center">
+                                                    <div class="profile-detail mt-3">
+                                                        <h5><a href="#" data-toggle="modal" data-target="#user-info">修改密码</a>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <a th:href="@{signin}" class="btn btn-primary">退出</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="content-page">
+        <div class="container-fluid" id="page-load-area">
+            <!-- 界面加载区域 -->
+            <p>界面加载区域 。。。</p>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+<footer class="iq-footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                版权 2021 @
+                <a th:href="@{https://www.badu.com/}"> SmileOffice</a>.
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Backend Bundle JavaScript -->
+<script th:src="@{static/assets/js/backend-bundle.min.js}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script th:src="@{static/assets/js/customizer.js}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script th:src="@{static/assets/js/chart-custom.js}"></script>
+
+<!-- app JavaScript -->
+<script th:src="@{static/assets/js/app.js}"></script>
+
+<script th:src="@{static/js/load-page.js}"></script>
+
+<script th:src="@{static/js/index.js}"></script>
+
+<script th:src="@{static/js/document.js}"></script>
+
+<!-- notiflix -->
+<script th:src="@{static/js/notiflix-1.3.0.min.js}"></script>
+
+<script type="text/javascript">
+    // 用户token
+    let token;
+
+    // 初始加载页面
+    window.onload = function () {
+        token = localStorage.getItem("smile-office-token");
+        if (token === null) {
+            window.location.href = "signin";
+        } else {
+            getPersonalInfo();
+            currentPage();
+        }
+    };
+
+    /* 初始化 notiflix */
+    Notiflix.Notify.Init({
+        timeout: 3000
+    });
+
+</script>
+
+<!-- User Info Modals -->
+<div id="user-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">修改密码</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="old-password">原密码</label>
+                        <input type="password" class="form-control" id="old-password" placeholder="请输入旧密码...">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="new-password">新密码</label>
+                        <input type="password" class="form-control" id="new-password" placeholder="请输入新密码...">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="confirm-password">确认密码</label>
+                        <input type="password" class="form-control" id="confirm-password" placeholder="确认密码...">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button id="modify-password-btn" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modals -->
+<div id="upload-doc-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">上传文件</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="pagination col-12 col-lg-12 col-xl-12 justify-content-center">
+                    <button id="upload-document-btn" class="btn btn-block btn-primary btn-round page-item ml-3">文件上传</button>
+                </div>
+                <div class="col-12 col-lg-12 col-xl-12  text-center">
+                    <form enctype="multipart/form-data" name="form1">
+                        <input style="opacity: 0;" id="upload-input" type="file" name="upload" onchange="change()" multiple accept="*" />
+                        <p id="upload-doc-name"></p>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button id="upload-btn" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
