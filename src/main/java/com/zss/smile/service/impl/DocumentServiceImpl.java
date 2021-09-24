@@ -19,12 +19,15 @@ import com.zss.smile.repository.DocumentRepository;
 import com.zss.smile.service.DocumentService;
 import com.zss.smile.util.DateUtil;
 import com.zss.smile.util.IdUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
 import java.io.File;
 import java.util.*;
 
@@ -33,6 +36,7 @@ import java.util.*;
  * @date 2021/9/6 9:48
  * @desc 服务层接口方法实现
  */
+@Slf4j
 @Service
 public class DocumentServiceImpl implements DocumentService {
 
@@ -54,6 +58,8 @@ public class DocumentServiceImpl implements DocumentService {
                 .documentName(newDoc)
                 .documentKey(docId)
                 .documentSize("0.00 KB")
+                .collect(false)
+                .recycle(false)
                 .documentType(FileUtility.getFileTypeEnum(newDoc).get())
                 .createTime(DateUtil.currentTimestamp())
                 .updateTime(DateUtil.currentTimestamp())
@@ -71,6 +77,8 @@ public class DocumentServiceImpl implements DocumentService {
                 .documentName(originalFilename)
                 .documentKey(docId)
                 .documentSize(fileSize)
+                .collect(false)
+                .recycle(false)
                 .documentType(FileUtility.getFileTypeEnum(originalFilename).get())
                 .createTime(DateUtil.currentTimestamp())
                 .updateTime(DateUtil.currentTimestamp())
@@ -99,32 +107,36 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Page<DocVo> getDocByPage(String userId, QueryDocVo query) {
+    public Page<DocVo> getDocByPage(String userId, QueryDocVo queryVo) {
         // 根据文档创建时间进行排序
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
-        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+        Pageable pageable = PageRequest.of(queryVo.getPage(), queryVo.getSize(), sort);
 
-        Page<Document> result;
-        if (StringUtils.isNotEmpty(query.getDocumentType())) {
-            result = documentRepository
-                    .findAllByUserIdAndDocumentType(userId, query.getDocumentType(), pageable);
-        } else {
-            result = documentRepository.findAllByUserId(userId, pageable);
-        }
+        Page<Document> result = documentRepository.findAll((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
-        List<Document> content = result.getContent();
-        List<DocVo> docVoList = new ArrayList<>();
-        for (Document document : content) {
-            docVoList.add(DocVo.builder()
-                    .docId(document.getDocId())
-                    .documentName(document.getDocumentName())
-                    .documentKey(document.getDocumentKey())
-                    .documentSize(document.getDocumentSize())
-                    .documentType(FileUtility.getFileTypeEnum(document.getDocumentName()).get())
-                    .createTime(DateUtil.timestampToDate(document.getCreateTime()))
-                    .updateTime(DateUtil.timestampToDate(document.getUpdateTime()))
-                    .build());
-        }
+            // 是否仅查询收藏的文档
+            if (queryVo.getCollect()) {
+                predicates.add(cb.equal(root.get("collect").as(Boolean.class), true));
+            }
+
+            // 根据文档类型查询
+            if (StringUtils.isNotEmpty(queryVo.getDocumentType())) {
+                predicates.add(cb.equal(root.get("documentType").as(String.class),
+                        queryVo.getDocumentType()));
+            }
+
+            // 查询未处于回收状态下的文档
+            predicates.add(cb.equal(root.get("recycle").as(Boolean.class), false));
+
+            // 查询对应用户
+            predicates.add(cb.equal(root.get("userId").as(String.class), userId));
+
+            Predicate[] p = new Predicate[predicates.size()];
+            return cb.and(predicates.toArray(p));
+        }, pageable);
+
+        List<DocVo> docVoList = changePageContent(result.getContent());
         return new PageImpl<>(docVoList, pageable, result.getTotalElements());
     }
 
@@ -151,7 +163,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteDocument(String docId, String userId) {
+    public Boolean deleteDocument(String userId, String docId) {
         return documentRepository.deleteByDocIdAndUserId(docId, userId) == 1;
     }
 
@@ -175,6 +187,87 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Boolean existInDbByDocName(String documentName, String userId) {
         return documentRepository.findByDocumentNameAndUserId(documentName, userId).isPresent();
+    }
+
+    @Override
+    public Map<String, Integer> countCollectDocument(String userId) {
+        Map<String, Integer> countResult = new HashMap<>(3);
+        for (FileTypeEnum fileTypeEnum : FileTypeEnum.values()) {
+            Integer count = documentRepository.countByUserIdAndDocumentTypeAndCollect(userId, fileTypeEnum.get(), true);
+            countResult.put(fileTypeEnum.get(), count);
+        }
+        return countResult;
+    }
+
+    @Override
+    public Page<DocVo> getDocInRecycle(String userId, QueryDocVo queryVo, List<String> docIds) {
+        // 根据文档创建时间进行排序
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
+        Pageable pageable = PageRequest.of(queryVo.getPage(), queryVo.getSize(), sort);
+
+        Page<Document> result = documentRepository.findAll((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 根据文档类型查询
+            if (StringUtils.isNotEmpty(queryVo.getDocumentType())) {
+                predicates.add(cb.equal(root.get("documentType").as(String.class),
+                        queryVo.getDocumentType()));
+            }
+
+            // 批量查询文档
+            CriteriaBuilder.In<Object> docIdIn = cb.in(root.get("docId"));
+            for (String docId : docIds) {
+                docIdIn.value(docId);
+            }
+            predicates.add(docIdIn);
+
+            // 查询处于回收状态下的文档
+            predicates.add(cb.equal(root.get("recycle").as(Boolean.class), true));
+
+            // 查询对应用户
+            predicates.add(cb.equal(root.get("userId").as(String.class), userId));
+
+            Predicate[] p = new Predicate[predicates.size()];
+            return cb.and(predicates.toArray(p));
+        }, pageable);
+
+        List<DocVo> docVoList = changePageContent(result.getContent());
+        return new PageImpl<>(docVoList, pageable, result.getTotalElements());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllExpiredDoc(List<String> docIds) {
+        Integer result = documentRepository.deleteAllInBatch(docIds);
+        log.info("删除过期回收站文档数量: [{}]", result);
+    }
+
+    @Override
+    public List<Document> getAllDocument(List<String> docIds) {
+        return documentRepository.findAllByIds(docIds);
+    }
+
+    /**
+     * 修改分页返回字段
+     *
+     * @param content 分页内容
+     * @return list
+     */
+    private List<DocVo> changePageContent(List<Document> content) {
+        List<DocVo> docVoList = new ArrayList<>();
+        for (Document document : content) {
+            docVoList.add(DocVo.builder()
+                    .docId(document.getDocId())
+                    .documentName(document.getDocumentName())
+                    .documentKey(document.getDocumentKey())
+                    .documentSize(document.getDocumentSize())
+                    .collect(document.getCollect())
+                    .documentType(FileUtility.getFileTypeEnum(document.getDocumentName()).get())
+                    .createTime(DateUtil.timestampToDate(document.getCreateTime()))
+                    .updateTime(DateUtil.timestampToDate(document.getUpdateTime()))
+                    .build());
+        }
+        return docVoList;
     }
 
     /**

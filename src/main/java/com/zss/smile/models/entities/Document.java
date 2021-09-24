@@ -62,6 +62,18 @@ public class Document implements Serializable {
     private String documentName;
 
     /**
+     * 是否收藏 -- 默认false
+     */
+    @Column(name = "collect", columnDefinition = "boolean")
+    private Boolean collect;
+
+    /**
+     * 受否处于回收状态
+     */
+    @Column(name = "recycle", columnDefinition = "boolean")
+    private Boolean recycle;
+
+    /**
      * 创建时间 -- 时间戳
      */
     @Column(name = "create_time", columnDefinition = "varchar(20)")

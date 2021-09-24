@@ -1,13 +1,13 @@
 package com.zss.smile.repository;
 
 import com.zss.smile.models.entities.Document;
-import com.zss.smile.models.vo.DocVo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,7 +16,8 @@ import java.util.Optional;
  * @desc 文档信息持久化
  */
 @Repository
-public interface DocumentRepository extends JpaRepository<Document, String> {
+public interface DocumentRepository extends JpaRepository<Document, String>,
+        JpaSpecificationExecutor<Document> {
 
     /**
      * 根据文档类型和用户统计数量
@@ -28,23 +29,14 @@ public interface DocumentRepository extends JpaRepository<Document, String> {
     Integer countByUserIdAndDocumentType(String userId, String documentType);
 
     /**
-     * 分页查询文档
+     * 统计收藏的数量
      *
      * @param userId       用户Id
-     * @param documentType 文档类型 -- word,cell,slide
-     * @param pageable     分页查询条件
-     * @return page
+     * @param documentType 文档类型
+     * @param collect      是否收藏
+     * @return 统计数量
      */
-    Page<Document> findAllByUserIdAndDocumentType(String userId, String documentType, Pageable pageable);
-
-    /**
-     * 分页查询文档
-     *
-     * @param userId       用户Id
-     * @param pageable     分页查询条件
-     * @return page
-     */
-    Page<Document> findAllByUserId(String userId, Pageable pageable);
+    Integer countByUserIdAndDocumentTypeAndCollect(String userId, String documentType, Boolean collect);
 
     /**
      * 通过documentKey获取doc
@@ -61,6 +53,7 @@ public interface DocumentRepository extends JpaRepository<Document, String> {
      * @param userId 用户id
      * @return result
      */
+    @Modifying
     Integer deleteByDocIdAndUserId(String docId, String userId);
 
     /**
@@ -72,4 +65,22 @@ public interface DocumentRepository extends JpaRepository<Document, String> {
      */
     Optional<Document> findByDocumentNameAndUserId(String documentName, String userId);
 
+    /**
+     * 批量删除文档
+     *
+     * @param docIds 文档Id
+     * @return result
+     */
+    @Modifying
+    @Query(value = "delete from smile_document where doc_id in ?1", nativeQuery = true)
+    Integer deleteAllInBatch(List<String> docIds);
+
+    /**
+     * 批量获取文档
+     *
+     * @param docIds 文档Id
+     * @return docList
+     */
+    @Query(value = "select * from smile_document where doc_id in ?1", nativeQuery = true)
+    List<Document> findAllByIds(List<String> docIds);
 }

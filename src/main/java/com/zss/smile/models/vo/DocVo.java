@@ -24,6 +24,8 @@ public class DocVo implements Serializable {
 
     private String documentSize;
 
+    private Boolean collect;
+
     private String createTime;
 
     private String updateTime;

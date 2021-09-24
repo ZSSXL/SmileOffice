@@ -24,6 +24,11 @@ public class QueryDocVo implements Serializable {
      */
     private String documentType;
 
+    /**
+     * 是否查询收藏文件
+     */
+    private Boolean collect;
+
     private Integer page = SmileConstant.DEFAULT_PAGE;
 
     private Integer size = SmileConstant.DEFAULT_SIZE;

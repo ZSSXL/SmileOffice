@@ -14,6 +14,7 @@ public class DateUtil {
 
     private static final String DATE_FORMAT = "yyyyMMdd";
     private static final String DATE_FORMAT_COMPLETE = "yyyy-MM-dd HH:mm:ss";
+    private static final Long THIRTY_DAYS_TIMESTAMP = 30L * 24L * 60 * 60L * 1000L;
 
     /**
      * 获取当前时间戳
@@ -22,6 +23,15 @@ public class DateUtil {
      */
     public static String currentTimestamp() {
         return String.valueOf(System.currentTimeMillis());
+    }
+
+    /**
+     * 30天前的时间戳
+     *
+     * @return 13位时间戳
+     */
+    public static String thirtyDaysAgo() {
+        return String.valueOf(System.currentTimeMillis() - THIRTY_DAYS_TIMESTAMP);
     }
 
     /**

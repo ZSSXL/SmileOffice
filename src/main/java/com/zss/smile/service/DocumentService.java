@@ -8,7 +8,7 @@ import com.zss.smile.models.vo.QueryDocVo;
 import com.zss.smile.models.vo.RenameVo;
 import org.springframework.data.domain.Page;
 
-import javax.print.Doc;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,8 +66,8 @@ public interface DocumentService {
     /**
      * 分页查询用户的文档
      *
-     * @param userId 用户Id
-     * @param query  查询条件
+     * @param userId  用户Id
+     * @param query   查询条件
      * @return page
      */
     Page<DocVo> getDocByPage(String userId, QueryDocVo query);
@@ -101,7 +101,7 @@ public interface DocumentService {
      * @param userId 用户Id
      * @return result
      */
-    Boolean deleteDocument(String docId, String userId);
+    Boolean deleteDocument(String userId, String docId);
 
     /**
      * 检验是否有同名文件
@@ -120,4 +120,37 @@ public interface DocumentService {
      * @return exist
      */
     Boolean existInDbByDocName(String documentName, String userId);
+
+    /**
+     * 获取用户的收藏统计数量
+     *
+     * @param userId 用户Id
+     * @return 统计结果
+     */
+    Map<String, Integer> countCollectDocument(String userId);
+
+    /**
+     * 获取回收且未过期的文档数据
+     *
+     * @param userId 用户Id
+     * @param query  查询条件
+     * @param docIds ids
+     * @return page
+     */
+    Page<DocVo> getDocInRecycle(String userId, QueryDocVo query, List<String> docIds);
+
+    /**
+     * 删除所有回收站中过期的文档
+     *
+     * @param docIds 文档Id
+     */
+    void deleteAllExpiredDoc(List<String> docIds);
+
+    /**
+     * 通过Id获取文档信息
+     *
+     * @param docIds ids
+     * @return docList
+     */
+    List<Document> getAllDocument(List<String> docIds);
 }

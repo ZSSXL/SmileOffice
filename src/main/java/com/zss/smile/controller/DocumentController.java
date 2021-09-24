@@ -12,6 +12,7 @@ import com.zss.smile.models.vo.DocVo;
 import com.zss.smile.models.vo.QueryDocVo;
 import com.zss.smile.models.vo.RenameVo;
 import com.zss.smile.service.DocumentService;
+import com.zss.smile.service.RecycleBinService;
 import com.zss.smile.service.UserService;
 import com.zss.smile.util.DateUtil;
 import com.zss.smile.util.FileSizeUtil;
@@ -50,11 +51,13 @@ public class DocumentController {
 
     private final DocumentService documentService;
     private final UserService userService;
+    private final RecycleBinService recycleBinService;
 
     @Autowired
-    public DocumentController(DocumentService documentService, UserService userService) {
+    public DocumentController(DocumentService documentService, UserService userService, RecycleBinService recycleBinService) {
         this.documentService = documentService;
         this.userService = userService;
+        this.recycleBinService = recycleBinService;
     }
 
     /**
@@ -130,6 +133,7 @@ public class DocumentController {
      * @return List
      */
     @PostMapping("/page")
+    @RequiredPermission
     public ServerResponse<Page<DocVo>> listDoc(@RequestHeader(SmileConstant.SMILE_TOKEN) String token,
                                                @RequestBody QueryDocVo query) {
         String userId = TokenUtil.getClaim(token, "userId").asString();
@@ -197,16 +201,21 @@ public class DocumentController {
     public ServerResponse<Void> deleteDocument(@PathVariable("docId") String docId,
                                                @RequestHeader(SmileConstant.SMILE_TOKEN) String token) {
         String userId = TokenUtil.getClaim(token, "userId").asString();
-        String loginName = TokenUtil.getClaim(token, "loginName").asString();
 
         Document document = documentService.getDocument(docId);
         // 删除目录下的文件
-        DocumentManager
-                .deleteDocument(loginName, document.getDocumentName(), baseStorageFolder);
-        // 删除数据
-        Boolean result = documentService.deleteDocument(docId, userId);
-        if (result) {
-            return ServerResponse.success("删除文件[" + document.getDocumentName() + "]成功");
+        // DocumentManager
+        //         .deleteDocument(loginName, document.getDocumentName(), baseStorageFolder)
+        // 加入回收站
+        // Boolean result = documentService.deleteDocument(docId, userId)
+        // 将文档的状态设为回收
+        document.setRecycle(true);
+        documentService.updateDocument(document);
+        // 创建回收记录
+        Boolean recycle = recycleBinService.recycle(userId, docId);
+
+        if (recycle) {
+            return ServerResponse.success("文件[" + document.getDocumentName() + "]已添加至回收站");
         } else {
             return ServerResponse.error("删除文件[" + document.getDocumentName() + "]失败");
         }
