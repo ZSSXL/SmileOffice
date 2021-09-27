@@ -203,12 +203,6 @@ public class DocumentController {
         String userId = TokenUtil.getClaim(token, "userId").asString();
 
         Document document = documentService.getDocument(docId);
-        // 删除目录下的文件
-        // DocumentManager
-        //         .deleteDocument(loginName, document.getDocumentName(), baseStorageFolder)
-        // 加入回收站
-        // Boolean result = documentService.deleteDocument(docId, userId)
-        // 将文档的状态设为回收
         document.setRecycle(true);
         documentService.updateDocument(document);
         // 创建回收记录

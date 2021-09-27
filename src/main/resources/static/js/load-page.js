@@ -22,12 +22,10 @@ function currentPage() {
             sideBarActive("document");
             getDocumentCount();
             getDocumentPage(0, 10, "");
-        } else if (item.indexOf("favorite") >= 0) {
-            // 加载收藏页
-            sideBarActive("favorite");
         } else if (item.indexOf("trash") >= 0) {
-            // 加载首页
+            // 加载回收站页面
             sideBarActive("trash");
+            getTrashDocumentPage(0, 10, "");
         }
     }
 }
@@ -51,10 +49,6 @@ function sideBarActive(pageName) {
         $("#sidebar-1").attr("class", "active");
         $("#sidebar-2").removeClass("active");
         $("#sidebar-3").removeClass("active");
-    } else if (pageName === "favorite") {
-        $("#sidebar-1").removeClass("active");
-        $("#sidebar-2").attr("class", "active");
-        $("#sidebar-3").removeClass("active");
     } else if (pageName === "trash") {
         $("#sidebar-1").removeClass("active");
         $("#sidebar-2").removeClass("active");
@@ -64,23 +58,16 @@ function sideBarActive(pageName) {
 
 // 首页加载
 $("#sidebar-1").click(function () {
-    console.log("load document")
+    sessionStorage.setItem("smile-office-collect", "false");
     loadPage("document");
     sideBarActive("document");
     getDocumentCount();
     getDocumentPage(0, 10, "");
 });
 
-// 收藏夹页加载
-$("#sidebar-2").click(function () {
-    console.log("load favorite")
-    loadPage("favorite");
-    sideBarActive("favorite");
-});
-
 // 回收站页加载
-$("#sidebar-3").click(function () {
-    console.log("load trash")
+$("#sidebar-2").click(function () {
     loadPage("trash");
     sideBarActive("trash");
+    getTrashDocumentPage(0, 10, "");
 });

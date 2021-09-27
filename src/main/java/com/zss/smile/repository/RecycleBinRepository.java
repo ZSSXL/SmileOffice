@@ -54,4 +54,13 @@ public interface RecycleBinRepository extends JpaRepository<RecycleBin, String> 
      */
     @Modifying
     Integer deleteByUserIdAndDocId(String userId, String docId);
+
+    /**
+     * 通过用户Id和文档Id查找回收站记录
+     *
+     * @param docId  文档Id
+     * @param userId 用户Id
+     * @return 回收站
+     */
+    RecycleBin findByDocIdAndUserId(String docId, String userId);
 }

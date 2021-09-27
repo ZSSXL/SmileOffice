@@ -56,7 +56,7 @@ function showDocumentCount(data) {
     $("#slide-count").text(data.slide);
 }
 
-// 当前电影页数
+// 当前文档页数
 let documentPages;
 // 当前页
 let curDocumentPage;
@@ -68,7 +68,8 @@ let curDocumentPage;
  * @param documentType 文档类型 -- word, cell, slide
  */
 function getDocumentPage(page, size, documentType) {
-    let data = {page, size, documentType};
+    let collect = showCollect();
+    let data = {page, size, documentType, collect};
     $.ajax({
         url: "/doc/page",
         contentType: "application/json;charset=utf-8",
@@ -89,6 +90,14 @@ function getDocumentPage(page, size, documentType) {
             }
         }
     });
+}
+
+/**
+ * 是否展示收藏数据
+ */
+function showCollect() {
+    let collect = sessionStorage.getItem("smile-office-collect");
+    return collect === null ? false : collect;
 }
 
 /**
@@ -126,31 +135,52 @@ function showDocuments(data) {
             iconBg = "bg-danger";
         }
 
-        let docNameTd = $("<td></td>")
-            .append($("<div class='d-flex align-items-center'></div>")
-                .append($("<div></div>").attr("class", "icon-small rounded mr-3 " + iconBg)
-                    .append($("<i></i>").attr("class", "ri-file-" + documentType + "-line")))
-                .append($("<div class='review-doc' style='cursor: pointer;'></div>").attr("doc-id", content.docId)
-                    .append(content.documentName)));
+        let docNameContentDiv = $("<div class='d-flex align-items-center'></div>")
+            .append($("<div></div>").attr("class", "icon-small rounded mr-3 " + iconBg)
+                .append($("<i></i>").attr("class", "ri-file-" + documentType + "-line")))
+            .append($("<div class='review-doc' style='cursor: pointer;'></div>").attr("doc-id", content.docId)
+                .append(content.documentName));
+
+        if (content.collect) {
+            docNameContentDiv.append($("<i class='lar la-star ml-2'></i>"));
+        }
+
+        let docNameTd = $("<td></td>").append(docNameContentDiv);
 
         let recentEditTd = $("<td></td>").append(content.updateTime);
 
         let sizeTd = $("<td></td>").append(content.documentSize == null ? "0.00 KB" : content.documentSize);
 
+        let operationDiv = $("<div class='dropdown-menu dropdown-menu-right'></div>").attr("doc-id", content.docId)
+            .append($("<a  class='dropdown-item review-doc' href='#'></a>").attr("doc-id", content.docId)
+                .append($("<i class='ri-eye-fill mr-2'></i>").attr("doc-id", content.docId))
+                .append("查看"));
+
+        let collectDiv;
+
+        if (content.collect) {
+            collectDiv = $("<a  class='dropdown-item cancel-collect-doc' href='#'></a>")
+                .append($("<i class='ri-star-fill mr-2'></i>"))
+                .append("取消收藏");
+        } else {
+            collectDiv = $("<a  class='dropdown-item collect-doc' href='#'></a>")
+                .append($("<i class='ri-star-fill mr-2'></i>"))
+                .append("收藏");
+        }
+
+        operationDiv.append(collectDiv);
+
         let operationTd = $("<td></td>")
             .append($("<div class='dropdown'></div>")
                 .append($("<span class='dropdown-toggle' data-toggle='dropdown'></span>")
                     .append($("<i class='ri-more-fill'></i>")))
-                .append($("<div class='dropdown-menu dropdown-menu-right'></div>").attr("doc-id", content.docId)
-                    .append($("<a  class='dropdown-item review-doc' href='#'></a>").attr("doc-id", content.docId)
-                        .append($("<i class='ri-eye-fill mr-2'></i>"))
-                        .append("查看"))
+                .append(operationDiv
                     .append($("<a class='dropdown-item rename-doc' href='#'></a>").attr("doc-name", content.documentName)
                         .append($("<i class='ri-edit-fill mr-2'></i>"))
                         .append("重命名"))
                     .append($("<a  class='dropdown-item delete-doc' href='#'></a>")
                         .append($("<i class='ri-delete-bin-6-fill mr-2'></i>"))
-                        .append("删除"))))
+                        .append("删除"))));
 
         $("<tr></tr>")
             .append(docNameTd)

@@ -15,6 +15,7 @@ public class DateUtil {
     private static final String DATE_FORMAT = "yyyyMMdd";
     private static final String DATE_FORMAT_COMPLETE = "yyyy-MM-dd HH:mm:ss";
     private static final Long THIRTY_DAYS_TIMESTAMP = 30L * 24L * 60 * 60L * 1000L;
+    private static final Long ONE_DAY = 1000L * 60L * 60L * 24L;
 
     /**
      * 获取当前时间戳
@@ -32,6 +33,17 @@ public class DateUtil {
      */
     public static String thirtyDaysAgo() {
         return String.valueOf(System.currentTimeMillis() - THIRTY_DAYS_TIMESTAMP);
+    }
+
+    /**
+     * 与现在相隔的天数
+     *
+     * @param timestamp 时间戳
+     * @return 先查天数
+     */
+    public static Integer daysFromNow(String timestamp) {
+        long days = System.currentTimeMillis() - Long.parseLong(timestamp);
+        return (int) (days / ONE_DAY);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.zss.smile.common.enums.FileTypeEnum;
 import com.zss.smile.helpers.DocumentManager;
 import com.zss.smile.helpers.FileUtility;
 import com.zss.smile.models.entities.Document;
+import com.zss.smile.models.entities.RecycleBin;
 import com.zss.smile.models.entities.User;
 import com.zss.smile.models.office.DocumentCfg;
 import com.zss.smile.models.office.EditorCfg;
@@ -16,6 +17,7 @@ import com.zss.smile.models.vo.DocVo;
 import com.zss.smile.models.vo.QueryDocVo;
 import com.zss.smile.models.vo.RenameVo;
 import com.zss.smile.repository.DocumentRepository;
+import com.zss.smile.repository.RecycleBinRepository;
 import com.zss.smile.service.DocumentService;
 import com.zss.smile.util.DateUtil;
 import com.zss.smile.util.IdUtil;
@@ -41,10 +43,12 @@ import java.util.*;
 public class DocumentServiceImpl implements DocumentService {
 
     private final DocumentRepository documentRepository;
+    private final RecycleBinRepository recycleBinRepository;
 
     @Autowired
-    public DocumentServiceImpl(DocumentRepository documentRepository) {
+    public DocumentServiceImpl(DocumentRepository documentRepository, RecycleBinRepository recycleBinRepository) {
         this.documentRepository = documentRepository;
+        this.recycleBinRepository = recycleBinRepository;
     }
 
     @Override
@@ -231,7 +235,7 @@ public class DocumentServiceImpl implements DocumentService {
             return cb.and(predicates.toArray(p));
         }, pageable);
 
-        List<DocVo> docVoList = changePageContent(result.getContent());
+        List<DocVo> docVoList = changePageContentForRecycle(result.getContent(), userId);
         return new PageImpl<>(docVoList, pageable, result.getTotalElements());
     }
 
@@ -263,8 +267,31 @@ public class DocumentServiceImpl implements DocumentService {
                     .documentSize(document.getDocumentSize())
                     .collect(document.getCollect())
                     .documentType(FileUtility.getFileTypeEnum(document.getDocumentName()).get())
-                    .createTime(DateUtil.timestampToDate(document.getCreateTime()))
+                    .createTime(String.valueOf(30 - DateUtil.daysFromNow(document.getCreateTime())))
                     .updateTime(DateUtil.timestampToDate(document.getUpdateTime()))
+                    .build());
+        }
+        return docVoList;
+    }
+
+    /**
+     * 修改分页返回字段
+     *
+     * @param content 分页内容
+     * @return list
+     */
+    private List<DocVo> changePageContentForRecycle(List<Document> content, String userId) {
+        List<DocVo> docVoList = new ArrayList<>();
+        RecycleBin recycleBin;
+        for (Document document : content) {
+            String docId = document.getDocId();
+            recycleBin = recycleBinRepository.findByDocIdAndUserId(docId, userId);
+            docVoList.add(DocVo.builder()
+                    .docId(document.getDocId())
+                    .documentName(document.getDocumentName())
+                    .documentSize(document.getDocumentSize())
+                    .documentType(FileUtility.getFileTypeEnum(document.getDocumentName()).get())
+                    .createTime(String.valueOf(30 - DateUtil.daysFromNow(recycleBin.getCreateTime())))
                     .build());
         }
         return docVoList;
