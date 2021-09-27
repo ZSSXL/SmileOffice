@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%; width:100%;" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SmileOffice</title>
+    <link rel="shortcut icon" th:href="@{static/assets/images/favicon.ico}" type="image/x-icon"/>
+
+    <script type="text/javascript" src="http://101.34.213.93:6180/web-apps/apps/api/documents/api.js"></script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        let docEditor;
+        function connectEditor(config) {
+            docEditor = new DocsAPI.DocEditor("iframeEditor", config);
+        }
+        /**
+         * 启动加载office配置
+         */
+        window.onload = function () {
+            connectEditor([[${officeConfig}]])
+        }
+
+    </script>
+</head>
+<body style="height: 100%; width: 100%; margin: 0;">
+<div class="form" style="height: 100%">
+    <div id="iframeEditor"></div>
+</div>
+</body>
+</html>

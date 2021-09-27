@@ -48,11 +48,9 @@ function sideBarActive(pageName) {
     if (pageName === "document") {
         $("#sidebar-1").attr("class", "active");
         $("#sidebar-2").removeClass("active");
-        $("#sidebar-3").removeClass("active");
     } else if (pageName === "trash") {
         $("#sidebar-1").removeClass("active");
-        $("#sidebar-2").removeClass("active");
-        $("#sidebar-3").attr("class", "active");
+        $("#sidebar-2").attr("class", "active");
     }
 }
 
