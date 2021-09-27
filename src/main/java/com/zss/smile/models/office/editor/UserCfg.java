@@ -1,5 +1,6 @@
 package com.zss.smile.models.office.editor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UserCfg implements Serializable {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String name;
 
 }

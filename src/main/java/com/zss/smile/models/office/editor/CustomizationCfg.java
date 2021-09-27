@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author ZSS
  * @date 2021/9/7 11:29
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomizationCfg {
+public class CustomizationCfg implements Serializable {
 
     /**
      * 压缩页面header -- default value is false

@@ -1,5 +1,6 @@
 package com.zss.smile.models.office;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.zss.smile.models.office.doc.InfoCfg;
 import com.zss.smile.models.office.doc.PermissionCfg;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class DocumentCfg implements Serializable {
     /**
      * 文档唯一Key
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String key;
 
     /**
@@ -43,10 +45,12 @@ public class DocumentCfg implements Serializable {
     /**
      * 文档基本信息
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private InfoCfg info;
 
     /**
      * 文档权限
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private PermissionCfg permissions;
 }
