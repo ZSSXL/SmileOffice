@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -313,9 +312,9 @@ public class DocumentServiceImpl implements DocumentService {
                 .fileType(Objects.requireNonNull(FileUtility.getFileExtension(documentName))
                         .replace(".", ""))
                 .url(DocumentManager.getServerUrlBase() +
-                        File.separator + "files" +
-                        File.separator + userInfo.getLoginName() +
-                        File.separator + documentName)
+                        "/" + "files" +
+                        "/" + userInfo.getLoginName() +
+                        "/" + documentName)
                 .title(documentName)
                 .info(InfoCfg.builder()
                         .favorite(false)

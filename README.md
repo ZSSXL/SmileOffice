@@ -52,6 +52,18 @@
 >
 > Onlyoffice: 6.4
 
+### 后端
+
+> 框架：spring-boot: 2.2.5.REELEASE
+>
+> 数据库：postgresql
+
+### 前端
+
+>jQuery
+>
+>Bootstrap
+
 ### 关于Onlyoffice
 
 以下是有关于Onlyoffice的简单介绍和安装以及相关注意事项

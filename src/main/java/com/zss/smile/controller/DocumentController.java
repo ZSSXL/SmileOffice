@@ -142,7 +142,7 @@ public class DocumentController {
     }
 
     /**
-     * 预览文件
+     * 查看和编辑文件
      *
      * @return string
      */

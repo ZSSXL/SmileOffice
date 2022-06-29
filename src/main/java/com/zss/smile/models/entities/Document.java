@@ -56,7 +56,7 @@ public class Document implements Serializable {
     private String documentKey;
 
     /**
-     * 文档路径
+     * 文档名称
      */
     @Column(name = "document_name", columnDefinition = "varchar(100)")
     private String documentName;
