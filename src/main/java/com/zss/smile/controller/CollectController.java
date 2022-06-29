@@ -4,13 +4,10 @@ import com.zss.smile.common.SmileConstant;
 import com.zss.smile.common.anno.RequiredPermission;
 import com.zss.smile.common.response.ServerResponse;
 import com.zss.smile.models.entities.Document;
-import com.zss.smile.models.vo.DocVo;
-import com.zss.smile.models.vo.QueryDocVo;
 import com.zss.smile.service.DocumentService;
 import com.zss.smile.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
