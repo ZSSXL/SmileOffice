@@ -24,9 +24,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
   datasource:
     url: jdbc:postgresql://127.0.0.1:5432/smile?currentSchema=smile
-    username: smile
-    password: Kk6neiid
+    username: ENC(dZr4YbSD/4XjXkj2xH1QbQ==) # smile
+    password: ENC(cUnSEC7yDySbg3KyH7vZbzmCzaCNn7Hs) # Kk6neiid
     driver-class-name: org.postgresql.Driver
+
+jasypt:
+  encryptor:
+    password: zhoushs@jasypt
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
 
 # 静态资源访问配置
 resources:
@@ -36,3 +42,9 @@ resources:
   files:
     pattern: /files/**
     location: E:\app\data\smile_office\files\
+
+# minio配置
+minio:
+  url: http://101.34.213.93:9010
+  accessKey: minio
+  secretKey: passw0rd
